@@ -1,0 +1,7 @@
+pandas
+requests
+entsoe-py
+python-dotenv
+demandlib
+matplotlib
+workalendar
