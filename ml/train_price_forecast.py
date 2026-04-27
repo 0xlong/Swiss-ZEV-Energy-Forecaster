@@ -151,3 +151,60 @@ print(f"  {'':12s}  {'MAE':>8}  {'MAPE':>8}  {'RMSE':>8}")
 print(f"  {'Overall':12s}  {overall['MAE']:>8.3f}  {overall['MAPE']:>7.2f}%  {overall['RMSE']:>8.3f}")
 print(f"  {'Peak 8-20h':12s}  {peak_m['MAE']:>8.3f}  {peak_m['MAPE']:>7.2f}%  {peak_m['RMSE']:>8.3f}")
 print(f"  {'Off-peak':12s}  {offpeak_m['MAE']:>8.3f}  {offpeak_m['MAPE']:>7.2f}%  {offpeak_m['RMSE']:>8.3f}")
+
+# ---------------------------------------------------------------------------
+# Chunk 5 — Baseline comparison & acceptance gate
+# ---------------------------------------------------------------------------
+# price_lag_168h is already in our test data — it's the actual price from
+# exactly 1 week ago at that same hour (computed by dbt, no extra work).
+# That IS the seasonal-naive prediction.
+#
+# Gate: model MAE must be ≤ 85 % of seasonal-naive MAE.
+# If the model can't beat "just copy last week" by 15 %, something is wrong
+# with the features — we don't save the model and exit with code 1.
+# ---------------------------------------------------------------------------
+
+print("\nChunk 5: comparing against seasonal-naive baseline …")
+
+sn_pred = test_df["price_lag_168h"].values
+sn_mae  = np.mean(np.abs(y_test.values - sn_pred))
+model_mae = overall["MAE"]
+threshold = 0.85 * sn_mae
+
+print(f"  Seasonal-naive MAE : {sn_mae:.3f} EUR/MWh")
+print(f"  XGBoost MAE        : {model_mae:.3f} EUR/MWh")
+print(f"  Acceptance gate    : model MAE ≤ {threshold:.3f}  (85 % × {sn_mae:.3f})")
+
+if model_mae > threshold:
+    print(f"\n  FAIL — model MAE {model_mae:.3f} > gate {threshold:.3f}")
+    print("  Not saving model. Diagnose feature quality and retrain.")
+    sys.exit(1)
+
+improvement_pct = (1 - model_mae / sn_mae) * 100
+print(f"  PASS — {improvement_pct:.1f} % better than seasonal-naive ✓")
+
+# ---------------------------------------------------------------------------
+# Chunk 6 — Persist the trained model to disk
+# ---------------------------------------------------------------------------
+# joblib serialises the fitted XGBRegressor (all 481 trees + metadata) to a
+# .pkl file.  predict.py loads it with joblib.load() — no retraining needed.
+# model_version embeds today's date so we can tell apart future re-trains.
+# ---------------------------------------------------------------------------
+
+import joblib  # noqa: E402
+import datetime  # noqa: E402
+
+print("\nChunk 6: saving model to disk …")
+
+MODEL_DIR = Path(__file__).resolve().parent / "models"
+MODEL_DIR.mkdir(exist_ok=True)
+
+model_version = f"xgb_v1_{datetime.date.today()}"
+model_path    = MODEL_DIR / "price_xgb.pkl"
+
+joblib.dump({"model": model, "feature_cols": feature_cols, "model_version": model_version}, model_path)
+
+print(f"  Saved → {model_path}")
+print(f"  model_version: {model_version}")
+print(f"  features bundled: {len(feature_cols)}")
+print(f"\n=== Step 7 complete — price model ready ===")
