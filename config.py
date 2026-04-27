@@ -61,6 +61,8 @@ LOAD_CSV = DATA_DIR / "load_hourly.csv"
 PVGIS_CSV = DATA_DIR / "pvgis_hourly.csv"
 #PVGIS_RAW_JSON = DATA_DIR / "pvgis_hourly_raw.json"
 ENTSOE_CSV = DATA_DIR / "entsoe_day_ahead_prices.csv"
+ENTSOE_LOAD_FORECAST_CSV = DATA_DIR / "entsoe_load_forecast.csv"
+ENTSOE_GENMIX_CSV = DATA_DIR / "entsoe_genmix.csv"
 OPENMETEO_CSV = DATA_DIR / "openmeteo_hourly.csv"
 
 # DuckDB warehouse — single-file database, shared by load_to_duckdb.py,

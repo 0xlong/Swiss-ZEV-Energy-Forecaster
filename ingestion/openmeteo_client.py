@@ -11,7 +11,7 @@ Variables fetched:
     - wind_speed_10m       (m/s)        — panel cooling
 
 No API key required. Rate limit: ~10 000 requests/day for non-commercial use.
-Window: config.START_UTC → config.END_UTC (2015-01-01 to 2021-01-01 exclusive).
+Window: config.START_UTC → config.END_UTC (2015-01-01 to 2020-01-01 exclusive).
 
 Follows the same extract → parse → validate → save pattern as pvgis_client.py.
 

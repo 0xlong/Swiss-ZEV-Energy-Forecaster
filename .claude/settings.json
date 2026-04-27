@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "permissions": {
+    "allow": [
+      "Bash(./energy_analytics_venv/Scripts/python -c ' *)",
+      "Bash(./energy_analytics_venv/Scripts/python notebooks/empa_profile_vis.py)",
+      "Bash(./energy_analytics_venv/Scripts/python notebooks/compare_bdew_empa.py)",
+      "Bash(energy_analytics_venv/Scripts/python.exe -c \"import config; print\\('ASSET_ID :', config.ASSET_ID\\); print\\('LAT/LON  :', config.LAT, config.LON\\); print\\('YEARS    :', config.YEARS[0], '..', config.YEARS[-1], '\\(n =', len\\(config.YEARS\\), '\\)'\\); print\\('START_UTC:', config.START_UTC\\); print\\('END_UTC  :', config.END_UTC\\); print\\('ENTSOE_START_UTC:', config.ENTSOE_START_UTC\\); print\\('LOAD_CSV :', config.LOAD_CSV\\); print\\('PVGIS_CSV:', config.PVGIS_CSV\\); print\\('ENTSOE_CSV:', config.ENTSOE_CSV\\); print\\('Has ENTSO-E key:', bool\\(config.get_entsoe_api_key\\(\\)\\)\\)\")",
+      "Bash(energy_analytics_venv/Scripts/python.exe -c \"import config; print\\('YEARS:', config.YEARS\\); print\\('START_UTC:', config.START_UTC\\); print\\('END_UTC:', config.END_UTC\\); print\\('ENTSOE_START_UTC exists:', hasattr\\(config, 'ENTSOE_START_UTC'\\)\\)\")",
+      "Read(//c/Users/Longin/.claude/plans/**)"
+    ],
+    "deny": [
+      "Read(./energy_analytics_venv/**)",
+      "Read(./data/**)",
+      "Edit(./energy_analytics_venv/**)",
+      "Edit(./data/**)",
+      "Write(./energy_analytics_venv/**)",
+      "Write(./data/**)",
+      "Glob(./energy_analytics_venv/**)",
+      "Grep(./energy_analytics_venv/**)",
+      "Grep(./data/**)",
+      "Bash(cd ./energy_analytics_venv*)",
+      "Bash(cd ./data*)"
+    ]
+  }
+}

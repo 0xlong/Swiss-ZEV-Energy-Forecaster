@@ -33,18 +33,24 @@ log = logging.getLogger(__name__)
 
 
 # Source CSVs and target raw tables. The CSVs are expected to exist already
-# (produced by pvgis_client.py, bwed_load_profile.py, entsoe_client.py).
+# (produced by pvgis_client.py, bwed_load_profile.py, entsoe_client.py,
+# openmeteo_client.py).
 TABLES = [
-    ("raw.pvgis_hourly",  config.PVGIS_CSV,  ["pv_power_kw"]),
-    ("raw.load_hourly",   config.LOAD_CSV,   ["load_kw"]),
-    ("raw.entsoe_prices", config.ENTSOE_CSV, ["price_eur_mwh"]),
+    ("raw.pvgis_hourly",           config.PVGIS_CSV,                ["pv_power_kw"]),
+    ("raw.load_hourly",            config.LOAD_CSV,                 ["load_kw"]),
+    ("raw.entsoe_prices",          config.ENTSOE_CSV,               ["price_eur_mwh"]),
+    ("raw.openmeteo_hourly",       config.OPENMETEO_CSV,            ["ghi_w_m2", "temp_c"]),
+    ("raw.entsoe_load_forecast",   config.ENTSOE_LOAD_FORECAST_CSV, ["load_forecast_mw"]),
+    ("raw.entsoe_genmix",          config.ENTSOE_GENMIX_CSV,        ["generation_mw"]),
 ]
 
 # load_hourly has 5 known DST duplicate ts_utc rows (one per spring-forward
 # transition 2015–2019) caused by nonexistent='shift_forward' in
 # bwed_load_profile.py mapping 02:00 local → 03:00+02:00 UTC, which collides
 # with the real 03:00 row.  These are deduped (averaged) in stg_load_hourly.
-KNOWN_DUPLICATE_TABLES = {"raw.load_hourly"}
+# entsoe_genmix is long-format (one row per gen_type per timestamp), so
+# (asset_id, ts_utc) naturally has multiple rows — not a true duplicate.
+KNOWN_DUPLICATE_TABLES = {"raw.load_hourly", "raw.entsoe_genmix"}
 
 
 def load(con: duckdb.DuckDBPyConnection, table: str, csv_path: Path) -> int:
