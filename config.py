@@ -51,6 +51,7 @@ END_UTC = pd.Timestamp(f"{END_YEAR + 1}-01-01", tz="UTC")  # exclusive
 # API config
 # ---------------------------------------------------------------------------
 PVGIS_URL = "https://re.jrc.ec.europa.eu/api/v5_2/seriescalc"
+OPENMETEO_URL = "https://archive-api.open-meteo.com/v1/archive"
 ENTSOE_BIDDING_ZONE = "10YCH-SWISSGRIDZ"
 
 # ---------------------------------------------------------------------------
@@ -60,6 +61,11 @@ LOAD_CSV = DATA_DIR / "load_hourly.csv"
 PVGIS_CSV = DATA_DIR / "pvgis_hourly.csv"
 #PVGIS_RAW_JSON = DATA_DIR / "pvgis_hourly_raw.json"
 ENTSOE_CSV = DATA_DIR / "entsoe_day_ahead_prices.csv"
+OPENMETEO_CSV = DATA_DIR / "openmeteo_hourly.csv"
+
+# DuckDB warehouse — single-file database, shared by load_to_duckdb.py,
+# dbt's profiles.yml, and downstream ML / dashboard scripts.
+DUCKDB_PATH = ROOT / "data" / "swiss_zev.duckdb"
 
 
 # ---------------------------------------------------------------------------
