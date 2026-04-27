@@ -53,15 +53,11 @@ models:
       (bidding zone 10YCH-SWISSGRIDZ), 2015–2019.
     columns:
       - name: asset_id
-        tests:
-          - not_null
+        tests: [not_null]
       - name: ts_utc
-        tests:
-          - not_null
-          - unique
+        tests: [not_null, unique]
       - name: ts_local
-        tests:
-          - not_null
+        tests: [not_null]
       - name: price_eur_mwh
         tests:
           - not_null
@@ -69,3 +65,87 @@ models:
               arguments:
                 min_value: -500
                 max_value: 4000
+
+  - name: stg_openmeteo_hourly
+    description: >
+      Cleaned hourly weather data from Open-Meteo Archive API for the asset
+      location (Baar). GHI, temperature, cloud cover, wind speed.
+    columns:
+      - name: asset_id
+        tests: [not_null]
+      - name: ts_utc
+        tests: [not_null, unique]
+      - name: ts_local
+        tests: [not_null]
+      - name: ghi_w_m2
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1200
+      - name: temp_c
+        tests: [not_null]
+      - name: cloud_pct
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: wind_ms
+        tests: [not_null]
+
+  - name: stg_entsoe_load_forecast
+    description: >
+      Cleaned hourly day-ahead total load forecast for Switzerland (Swissgrid).
+    columns:
+      - name: asset_id
+        tests: [not_null]
+      - name: ts_utc
+        tests: [not_null, unique]
+      - name: ts_local
+        tests: [not_null]
+      - name: load_forecast_mw
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 20000
+
+  - name: stg_entsoe_genmix
+    description: >
+      Pivoted generation mix: one row per (asset_id, ts_utc) with MW columns
+      and generation shares for solar, hydro, nuclear.
+    columns:
+      - name: asset_id
+        tests: [not_null]
+      - name: ts_utc
+        tests: [not_null, unique]
+      - name: ts_local
+        tests: [not_null]
+      - name: total_gen_mw
+        tests: [not_null]
+      - name: solar_share
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: hydro_share
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: nuclear_share
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+

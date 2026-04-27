@@ -36,8 +36,8 @@ models:
 
   - name: fct_hourly_market
     description: >
-      ML feature table: price + lags + calendar features, one row per
-      (asset_id, ts_utc). Phase D appends weather and gen-mix columns.
+      ML feature table for the Phase D price forecasting model: price + lags +
+      calendar + weather + load forecast + 24h-lagged gen-mix shares.
     columns:
       - name: asset_id
         tests: [not_null]
@@ -52,6 +52,43 @@ models:
               arguments:
                 min_value: -500
                 max_value: 4000
+      - name: ghi_w_m2
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1200
+      - name: cloud_pct
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+
+  - name: fct_pv_features
+    description: >
+      ML feature table for the Phase D PV forecasting model: PV target +
+      weather features + calendar + PV lags.
+    columns:
+      - name: asset_id
+        tests: [not_null]
+      - name: ts_utc
+        tests: [not_null, unique]
+      - name: ts_local
+        tests: [not_null]
+      - name: pv_power_kw
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 120
+      - name: ghi_w_m2
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1200
 
   - name: mrt_zev_kpis_daily
     description: >
@@ -100,3 +137,4 @@ models:
               arguments:
                 min_value: 0
                 max_value: 1
+

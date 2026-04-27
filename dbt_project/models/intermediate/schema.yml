@@ -42,8 +42,9 @@ models:
   - name: int_price_features
     description: >
       Price feature table for ML (Phase D). Includes raw price, 1h/24h/168h lags,
-      hour-of-day, day-of-week, weekend flag, and CH public holiday flag.
-      Weather and generation-mix columns are added in Phase D.
+      hour-of-day, day-of-week, weekend flag, CH public holiday flag, weather
+      features (GHI, temp, cloud, wind), load forecast, and 24h-lagged
+      generation-mix shares (to avoid day-ahead look-ahead leakage).
     columns:
       - name: asset_id
         tests: [not_null]
@@ -58,3 +59,67 @@ models:
               arguments:
                 min_value: -500
                 max_value: 4000
+      - name: ghi_w_m2
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1200
+      - name: cloud_pct
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+      - name: solar_share_lag24h
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: hydro_share_lag24h
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: nuclear_share_lag24h
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+
+  - name: int_pv_features
+    description: >
+      PV production feature table for ML (Phase D). Target is pv_power_kw from
+      PVGIS simulation. Features include weather (GHI, temp, cloud, wind),
+      calendar (hour, day of year, day of week), and PV production lags
+      (1h, 24h, 168h).
+    columns:
+      - name: asset_id
+        tests: [not_null]
+      - name: ts_utc
+        tests: [not_null, unique]
+      - name: ts_local
+        tests: [not_null]
+      - name: pv_power_kw
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 120
+      - name: ghi_w_m2
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1200
+      - name: cloud_pct
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+

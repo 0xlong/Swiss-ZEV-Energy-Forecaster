@@ -43,3 +43,60 @@ sources:
           - name: ts_local
           - name: price_eur_mwh
           - name: price_eur_kwh
+
+      - name: openmeteo_hourly
+        description: >
+          Hourly weather data from Open-Meteo Archive API for the asset location
+          (Baar, lat 47.195, lon 8.527). Variables: GHI (shortwave radiation),
+          temperature, cloud cover, wind speed. Period 2015–2019.
+        columns:
+          - name: asset_id
+          - name: ts_utc
+          - name: ts_local
+          - name: ghi_w_m2
+          - name: temp_c
+          - name: cloud_pct
+          - name: wind_ms
+
+      - name: entsoe_load_forecast
+        description: >
+          Day-ahead total load forecast for Switzerland from ENTSO-E (Swissgrid
+          publication). Hourly MW values, 2015–2019.
+        columns:
+          - name: asset_id
+          - name: ts_utc
+          - name: ts_local
+          - name: load_forecast_mw
+
+      - name: entsoe_genmix
+        description: >
+          Actual generation per production type for Switzerland from ENTSO-E.
+          Long format: one row per (asset_id, ts_utc, gen_type). Types include
+          nuclear, hydro_*, solar, wind_onshore, fossil_gas. Period 2015–2019.
+        columns:
+          - name: asset_id
+          - name: ts_utc
+          - name: ts_local
+          - name: gen_type
+          - name: generation_mw
+
+  - name: main
+    schema: main
+    description: >
+      Tables written directly by Python ML scripts (ml/predict.py).
+      These are read back into dbt so predictions appear in the lineage
+      graph and can be tested.
+    tables:
+      - name: fct_forecasts
+        description: >
+          ML model predictions written by ml/predict.py via CREATE OR REPLACE
+          TABLE. Schema: (asset_id, ts_utc, ts_local, target, y_pred, y_true,
+          model_version). Only populated after running the ML pipeline.
+        columns:
+          - name: asset_id
+          - name: ts_utc
+          - name: ts_local
+          - name: target
+          - name: y_pred
+          - name: y_true
+          - name: model_version
