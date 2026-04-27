@@ -1,0 +1,45 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    description: "Raw tables bulk-loaded from ingestion CSVs by load_to_duckdb.py."
+    tables:
+      - name: pvgis_hourly
+        description: >
+          Hourly simulated PV power output from PVGIS API (EU JRC, SARAH2 database).
+          100 kWp rooftop installation at Baar warehouse (lat 47.195, lon 8.527).
+          ts_local column contains UTC timestamps (named ts_local by PVGIS convention);
+          stg_pvgis_hourly reinterprets them as UTC and derives Europe/Zurich ts_local.
+        columns:
+          - name: asset_id
+          - name: ts_local
+            description: "PVGIS UTC timestamp — misleadingly named; treated as UTC in staging."
+          - name: pv_power_kw
+          - name: irradiance_w_m2
+          - name: sun_height_deg
+          - name: temp_2m_c
+          - name: wind_speed_m_s
+
+      - name: load_hourly
+        description: >
+          Synthetic hourly building load from BDEW G1 standard load profile, scaled
+          to 500 MWh/yr. Has 5 known DST duplicate ts_utc rows (spring-forward
+          2015–2019) from nonexistent='shift_forward' in bwed_load_profile.py.
+          stg_load_hourly deduplicates by averaging load_kw per (asset_id, ts_utc).
+        columns:
+          - name: asset_id
+          - name: ts_utc
+          - name: ts_local
+          - name: load_kw
+
+      - name: entsoe_prices
+        description: >
+          CH day-ahead spot prices from ENTSO-E Transparency Platform, bidding zone
+          10YCH-SWISSGRIDZ. Period 2015-01-01 to 2019-12-31 (earliest CH data).
+        columns:
+          - name: asset_id
+          - name: ts_utc
+          - name: ts_local
+          - name: price_eur_mwh
+          - name: price_eur_kwh

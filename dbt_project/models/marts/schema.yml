@@ -1,0 +1,102 @@
+version: 2
+
+models:
+  - name: fct_asset_performance
+    description: >
+      Per-asset per-hour operational facts with tariff and carbon constants from
+      dim_asset. This is the primary fact table for KPI rollups and the dashboard.
+    columns:
+      - name: asset_id
+        tests: [not_null]
+      - name: ts_utc
+        tests: [not_null, unique]
+      - name: ts_local
+        tests: [not_null]
+      - name: pv_power_kw
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 120
+      - name: load_kw
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 300  # BDEW G1 peaks at ~239 kW for 500 MWh/yr scaling
+      - name: direct_self_consumption_kw
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 120
+
+  - name: fct_hourly_market
+    description: >
+      ML feature table: price + lags + calendar features, one row per
+      (asset_id, ts_utc). Phase D appends weather and gen-mix columns.
+    columns:
+      - name: asset_id
+        tests: [not_null]
+      - name: ts_utc
+        tests: [not_null, unique]
+      - name: ts_local
+        tests: [not_null]
+      - name: price_eur_mwh
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: -500
+                max_value: 4000
+
+  - name: mrt_zev_kpis_daily
+    description: >
+      Daily ZEV KPIs: self-consumption ratio, autarky ratio, CO2 avoided (kg),
+      and CHF saved. Tariffs (0.28/0.08 CHF/kWh) and carbon intensity
+      (~30 gCO2/kWh CH grid) are parameterized via dim_asset.
+    columns:
+      - name: asset_id
+        tests: [not_null]
+      - name: date
+        tests: [not_null]
+      - name: self_consumption_ratio
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: autarky_ratio
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+
+  - name: mrt_zev_kpis_monthly
+    description: >
+      Monthly rollup of ZEV KPIs aggregated from mrt_zev_kpis_daily.
+    columns:
+      - name: asset_id
+        tests: [not_null]
+      - name: month
+        tests: [not_null]
+      - name: self_consumption_ratio
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: autarky_ratio
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
