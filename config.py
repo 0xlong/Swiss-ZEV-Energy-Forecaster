@@ -71,6 +71,29 @@ DUCKDB_PATH = ROOT / "data" / "swiss_zev.duckdb"
 
 
 # ---------------------------------------------------------------------------
+# Battery optimizer (Phase F)
+# ---------------------------------------------------------------------------
+# These constants are used by optimization/battery_dispatch.py AND by the
+# dashboard page 3_ZEV_Economics.py (payback calculation).  Centralising them
+# here means changing a tariff in one place propagates everywhere — no drift.
+
+RETAIL_CHF_PER_KWH = 0.28       # what the building pays for grid electricity
+FEED_IN_CHF_PER_KWH = 0.08      # what the grid pays for exported surplus PV
+# One-way efficiency (e.g. 0.95 on charge + 0.95 on discharge = ≈0.90 round-trip).
+# This is the key number that makes simultaneous charge+discharge unprofitable,
+# so the LP never does it — no binary flags needed (see battery_dispatch.py).
+BATTERY_EFFICIENCY = 0.95
+# Maximum power the battery inverter can push in or out per hour.
+BATTERY_POWER_CAP_KW = 50.0
+# Pre-computed capacity sizes for the dashboard slider.
+# We solve the LP for each size offline; the dashboard only filters a table.
+BATTERY_CAPACITIES_KWH = [0, 50, 100, 150, 200]
+# Installed cost assumption used for the payback period calculation on Page 3.
+# ~500 CHF/kWh is a conservative mid-2024 estimate for residential/commercial
+# Li-ion storage in Switzerland (including inverter, installation, permits).
+BATTERY_COST_CHF_PER_KWH = 500.0
+
+# ---------------------------------------------------------------------------
 # Secret accessors
 # ---------------------------------------------------------------------------
 def get_entsoe_api_key() -> str:

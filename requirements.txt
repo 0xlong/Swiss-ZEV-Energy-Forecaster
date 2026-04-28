@@ -11,3 +11,6 @@ dbt-duckdb>=1.7.0
 xgboost
 scikit-learn
 joblib
+pulp
+streamlit>=1.32.0
+plotly>=5.20.0

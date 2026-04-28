@@ -138,3 +138,92 @@ models:
                 min_value: 0
                 max_value: 1
 
+  - name: fct_asset_performance_battery
+    description: >
+      Parallel fact table to fct_asset_performance extended with battery dispatch.
+      Grain: (asset_id, ts_utc, battery_capacity_kwh). Five rows per hour, one per
+      pre-computed battery capacity [0, 50, 100, 150, 200] kWh. Page 2 of the
+      dashboard continues reading fct_asset_performance (unbatteried); Page 3 reads
+      this table. Parallel tables preserve both grains without row multiplication.
+    columns:
+      - name: asset_id
+        tests: [not_null]
+      - name: ts_utc
+        tests: [not_null]
+      - name: battery_capacity_kwh
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 200
+      - name: on_site_pv_kw
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 120
+      - name: own_covered_load_kw
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 300
+
+  - name: mrt_zev_kpis_battery_daily
+    description: >
+      Daily ZEV KPIs with battery. Grain: (asset_id, date, battery_capacity_kwh).
+      Dashboard slider filters by battery_capacity_kwh; ratios and net_chf_cost
+      are the key columns for financial comparison across battery sizes.
+    columns:
+      - name: asset_id
+        tests: [not_null]
+      - name: date
+        tests: [not_null]
+      - name: battery_capacity_kwh
+        tests: [not_null]
+      - name: self_consumption_ratio
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: autarky_ratio
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+
+  - name: mrt_zev_kpis_battery_monthly
+    description: >
+      Monthly rollup of battery-aware ZEV KPIs. Grain: (asset_id, month,
+      battery_capacity_kwh). Primary data source for the Streamlit Page 3 slider.
+      Ratios are re-derived from monthly sums (volume-weighted), not averaged
+      from daily ratios.
+    columns:
+      - name: asset_id
+        tests: [not_null]
+      - name: month
+        tests: [not_null]
+      - name: battery_capacity_kwh
+        tests: [not_null]
+      - name: self_consumption_ratio
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+      - name: autarky_ratio
+        tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 1
+

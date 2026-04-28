@@ -80,6 +80,25 @@ sources:
           - name: gen_type
           - name: generation_mw
 
+      - name: battery_simulations
+        description: >
+          Battery dispatch results written by optimization/battery_dispatch.py.
+          One row per (asset_id, ts_utc, battery_capacity_kwh): the optimal
+          charge, discharge, state-of-charge, grid import, and grid export for
+          each hour under each pre-computed battery size [0, 50, 100, 150, 200] kWh.
+          Grain is (asset_id, ts_utc, battery_capacity_kwh) — 5× the row count
+          of the other raw tables.  ts_utc is a naive timestamp (no tz info);
+          stg_battery_simulations casts it to TIMESTAMPTZ and derives ts_local.
+        columns:
+          - name: asset_id
+          - name: ts_utc
+          - name: battery_capacity_kwh
+          - name: charge_kw
+          - name: discharge_kw
+          - name: soc_kwh
+          - name: grid_import_kw
+          - name: grid_export_kw
+
   - name: main
     schema: main
     description: >
