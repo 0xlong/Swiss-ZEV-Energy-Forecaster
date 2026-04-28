@@ -1,0 +1,115 @@
+{
+  "generated_at": "2026-04-28",
+  "test_window": {
+    "start": "2019-07-01",
+    "end": "2019-12-31"
+  },
+  "price_eur_mwh": {
+    "model_version": "xgb_v1_2026-04-27",
+    "overall": {
+      "xgboost": {
+        "mae": 1.3395,
+        "mape": 4.3714,
+        "rmse": 1.8212
+      },
+      "persistence_24h": {
+        "mae": 5.0628,
+        "mape": 15.9766,
+        "rmse": 7.2663
+      },
+      "seasonal_naive_168h": {
+        "mae": 5.9058,
+        "mape": 20.943,
+        "rmse": 7.81
+      }
+    },
+    "peak_8_19h": {
+      "xgboost": {
+        "mae": 1.272,
+        "mape": 4.0507,
+        "rmse": 1.7187
+      },
+      "persistence_24h": {
+        "mae": 6.0923,
+        "mape": 18.6265,
+        "rmse": 8.601
+      },
+      "seasonal_naive_168h": {
+        "mae": 6.2064,
+        "mape": 21.163,
+        "rmse": 8.1181
+      }
+    },
+    "offpeak": {
+      "xgboost": {
+        "mae": 1.4071,
+        "mape": 4.6921,
+        "rmse": 1.9183
+      },
+      "persistence_24h": {
+        "mae": 4.0333,
+        "mape": 13.3267,
+        "rmse": 5.6233
+      },
+      "seasonal_naive_168h": {
+        "mae": 5.6053,
+        "mape": 20.723,
+        "rmse": 7.4892
+      }
+    }
+  },
+  "pv_power_kw": {
+    "model_version": "xgb_v1_2026-04-27",
+    "overall": {
+      "xgboost": {
+        "mae": 2.7075,
+        "mape": 45.1408,
+        "rmse": 6.4006
+      },
+      "persistence_24h": {
+        "mae": 6.9248,
+        "mape": 88.069,
+        "rmse": 15.3488
+      },
+      "seasonal_naive_168h": {
+        "mae": 8.0748,
+        "mape": 103.2208,
+        "rmse": 17.0521
+      }
+    },
+    "daytime_6_20h": {
+      "xgboost": {
+        "mae": 4.3222,
+        "mape": 71.2367,
+        "rmse": 8.096
+      },
+      "persistence_24h": {
+        "mae": 11.0798,
+        "mape": 140.9104,
+        "rmse": 19.4149
+      },
+      "seasonal_naive_168h": {
+        "mae": 12.9197,
+        "mape": 165.1533,
+        "rmse": 21.5694
+      }
+    },
+    "nighttime": {
+      "xgboost": {
+        "mae": 0.0165,
+        "mape": 1.6477,
+        "rmse": 0.0512
+      },
+      "persistence_24h": {
+        "mae": 0.0,
+        "mape": 0.0,
+        "rmse": 0.0
+      },
+      "seasonal_naive_168h": {
+        "mae": 0.0,
+        "mape": 0.0,
+        "rmse": 0.0
+      }
+    }
+  }
+}
