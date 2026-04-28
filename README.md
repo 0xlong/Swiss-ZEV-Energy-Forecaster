@@ -2,7 +2,7 @@
 
 A complete data pipeline and AI forecasting model for Swiss commercial energy systems. It evaluates the economics of self-consumption for a modeled logistics warehouse in Baar (ZG), using real Swiss day-ahead prices, simulated PV production, and robust data engineering practices.
 
-[**Live Dashboard Demo**](https://swiss-zev-forecaster.streamlit.app/)
+[**Live Dashboard Demo**]([https://swiss-zev-forecaster.streamlit.app/](https://share.streamlit.io/errors/not_found))
 
 ## Why this exists
 
