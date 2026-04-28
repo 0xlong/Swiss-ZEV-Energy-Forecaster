@@ -71,54 +71,58 @@ st.divider()
 st.subheader("Key results")
 
 col1, col2, col3, col4 = st.columns(4)
-col1.metric(
-    "Avg self-consumption",
-    f"{summary[0]:.1%}",
-    help="Fraction of PV generation consumed on-site (unbatteried)",
-)
-col2.metric(
-    "Avg autarky ratio",
-    f"{summary[1]:.1%}",
-    help="Fraction of building load covered by own PV generation",
-)
-col3.metric(
-    "CO₂ avoided (total)",
-    f"{summary[2]:.1f} t",
-    help="5-year total · 30 gCO₂/kWh Swiss grid intensity",
-)
-col4.metric(
-    "CHF saved (avg/yr)",
-    f"CHF {summary[3]:,.0f}",
-    help="Retail 0.28 − feed-in 0.08 CHF/kWh spread applied to self-consumed kWh",
-)
+with col1.container(border=True):
+    st.metric(
+        "Avg self-consumption",
+        f"{summary[0]:.1%}",
+        help="The percentage of our own generated solar power that we use directly in the building, rather than sending it to the grid.",
+    )
+with col2.container(border=True):
+    st.metric(
+        "Avg autarky ratio",
+        f"{summary[1]:.1%}",
+        help="The percentage of the building's total energy needs that is covered by our own solar power.",
+    )
+with col3.container(border=True):
+    st.metric(
+        "CO₂ avoided (total)",
+        f"{summary[2]:.1f} t",
+        help="The total amount of carbon dioxide emissions prevented by using our solar power instead of drawing from the grid.",
+    )
+with col4.container(border=True):
+    st.metric(
+        "CHF saved (avg/yr)",
+        f"CHF {summary[3]:,.0f}",
+        help="The average money saved per year by using our own solar power instead of buying it from the grid.",
+    )
 
-st.divider()
 
 col_price, col_pv = st.columns(2)
 
-col_price.subheader("Price forecast")
-col_price.metric("XGBoost MAE", f"{price_mae:.3f} EUR/MWh")
-col_price.metric(
-    "vs Seasonal-naive (168h)",
-    f"{price_improvement:.1f}% better",
-    help=f"Baseline MAE: {price_baseline_mae:.3f} EUR/MWh",
-)
-col_price.caption(f"Test window: H2 2019 · {price_m['model_version']}")
+with col_price.container(border=True):
+    st.subheader("Price forecast")
+    st.metric(
+        "XGBoost MAE", 
+        f"{price_mae:.3f} EUR/MWh",
+        help="Mean Absolute Error: The average difference between our AI forecasted electricity price and the actual price."
+    )
+    st.metric(
+        "vs Seasonal-naive (168h)",
+        f"{price_improvement:.1f}% better",
+        help=f"How much better our AI model is compared to simply guessing that next week's price will be the same as this week's price. (Baseline MAE: {price_baseline_mae:.3f} EUR/MWh)",
+    )
+    st.caption(f"Test window: H2 2019 · {price_m['model_version']}")
 
-col_pv.subheader("PV forecast")
-col_pv.metric("XGBoost MAE", f"{pv_mae:.2f} kW")
-col_pv.metric(
-    "vs Persistence (lag-24h)",
-    f"{pv_improvement:.1f}% better",
-    help=f"Baseline MAE: {pv_baseline_mae:.2f} kW",
-)
-col_pv.caption(f"Test window: H2 2019 · {pv_m['model_version']}")
-
-st.divider()
-
-st.markdown("""
-**Pages (sidebar):**
-- **Market Forecast** — CH day-ahead price and PV output: XGBoost vs naive baselines, MAE by hour of day
-- **Asset Performance** — monthly energy balance, self-consumption and autarky trends, CHF/CO₂ KPIs
-- **ZEV Economics** — battery dispatch optimizer (Phase F, coming soon)
-""")
+with col_pv.container(border=True):
+    st.subheader("PV forecast")
+    st.metric(
+        "XGBoost MAE", 
+        f"{pv_mae:.2f} kW",
+        help="Mean Absolute Error: The average difference between our AI forecasted solar production and the actual production."
+    )
+    st.metric(
+        "vs Persistence (lag-24h)",
+        f"{pv_improvement:.1f}% better",
+        help=f"How much better our AI model is compared to simply guessing that tomorrow's solar production will be the same as today's. (Baseline MAE: {pv_baseline_mae:.2f} kW)",
+    )
+    st.caption(f"Test window: H2 2019 · {pv_m['model_version']}")

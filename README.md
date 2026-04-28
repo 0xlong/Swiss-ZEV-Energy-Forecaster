@@ -6,17 +6,15 @@ A complete data pipeline and AI forecasting model for Swiss commercial energy sy
 
 ## Why this exists
 
-The Swiss energy transition relies heavily on decentralised production and consumption. Under the **ZEV** (Zusammenschluss zum Eigenverbrauch) regulation, and looking forward to **LEG** (Lokale Elektrizitätsgemeinschaften) in 2025, commercial properties can pool consumption to maximize **self-consumption**. This project serves as a quantitative engine to evaluate these setups: calculating **autarky** and self-consumption ratios, forecasting day-ahead electricity prices, and providing the underlying data foundation required for modern Energy-as-a-Service (EaaS) and energy contracting models.
+The Swiss energy transition relies heavily on decentralised production and consumption. Under the **ZEV** (Zusammenschluss zum Eigenverbrauch) regulation, commercial properties can pool consumption to maximize **self-consumption**. This project serves as a quantitative engine to evaluate these setups: calculating autarky and self-consumption ratios, forecasting day-ahead electricity prices, and providing the underlying data foundation required for modern Energy-as-a-Service (EaaS) and energy contracting models.
 
 ## Architecture & Data Infrastructure
 
-![Architecture](docs/architecture.png)
-
-This project is built on a modern, scalable **ELT (Extract, Load, Transform)** analytical environment. While it currently uses **DuckDB** as a high-performance local analytical engine, the modular architecture is intentionally designed for a seamless migration to **modern cloud data infrastructures such as BigQuery, Snowflake, Redshift, or Databricks**.
+This project is built on a modern, scalable **ELT (Extract, Load, Transform)** analytical environment. While it currently uses DuckDB as a high-performance local analytical engine, the modular architecture is intentionally designed for a seamless migration to modern cloud data infrastructures such as BigQuery, Snowflake, Redshift, or Databricks.
 
 - **Data Pipelines & Engineering (Python & SQL):** Automated data extraction, transformation, and loading of energy market data, weather data, and consumption profiles.
 - **Data Warehousing (DuckDB / BigQuery / Snowflake):** Structured to mirror production workflows in modern cloud data warehouses, demonstrating proficiency in building purpose-driven analytical environments.
-- **Transformation & Validation (dbt):** All business logic is managed in dbt SQL. This layer includes rigorous **data quality and plausibility checks** (e.g., verifying expected ranges for prices, handling missing values) to continuously improve analytical outputs.
+- **Transformation & Validation (dbt):** All business logic is managed in dbt SQL. This layer includes rigorous data quality and plausibility checks (e.g., verifying expected ranges for prices, handling missing values) to continuously improve analytical outputs.
 - **AI-Based Forecasting (XGBoost & Machine Learning):** Applying and training AI models and machine learning algorithms (XGBoost regression) to predict day-ahead market prices and energy generation based on historical patterns.
 - **Reporting & Visualisation (Streamlit):** An interactive dashboard creating KPI reports, data visualizations, and variance analysis to translate findings into actionable recommendations for stakeholders.
 
@@ -82,8 +80,9 @@ The project relies entirely on high-quality, free data:
 - **Static Tariffs:** Financial KPIs are calculated using fixed default tariffs. In reality, these vary significantly by local Swiss utility (Verteilnetzbetreiber).
 - **Swiss Carbon Intensity:** A flat factor of 30 gCO₂/kWh is used for the grid carbon intensity, based on SFOE averages.
 
-## Future Improvements: ZEV Economics Expansion
+## Roadmap
 
+### ZEV Economics Expansion
 As a future enhancement, this analytical infrastructure will be expanded to simulate full real-world energy contracting scenarios, analyzing energy data to identify optimization opportunities. 
 
 By joining the forecasted PV and load profiles against Swiss typical tariffs (e.g., Retail: 28 Rp./kWh, Feed-in: 8 Rp./kWh), the project will automatically evaluate key metrics for a modeled warehouse (e.g., 100 kWp PV array and ~500 MWh/yr demand):
@@ -95,8 +94,7 @@ By joining the forecasted PV and load profiles against Swiss typical tariffs (e.
 
 *This baseline model will further demonstrate how the facility absorbs almost all generated solar power directly, paving the way for advanced LEG-shared PV community simulations and dynamic energy trading integrations.*
 
-## Roadmap
-
+### Technical Infrastructure
 - **Cloud Migration:** Replace local DuckDB instances with **Snowflake** or **BigQuery** to leverage modern cloud data infrastructure at enterprise scale.
 - **Advanced Orchestration:** Transition data pipelines to Apache Airflow for robust scheduling and dependency management.
 - **Anomaly Detection:** Implement robust machine learning anomaly detection algorithms on incoming consumption and asset data to continuously improve analytical outputs.

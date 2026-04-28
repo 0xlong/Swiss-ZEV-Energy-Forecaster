@@ -99,19 +99,22 @@ with tab_price:
     )
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Overall MAE", f"{overall['mae']:.3f} EUR/MWh")
-    c2.metric("Peak MAE (08–19h)", f"{peak['mae']:.3f} EUR/MWh")
-    c3.metric("Overall MAPE", f"{overall['mape']:.2f}%")
-    c4.metric("vs Seasonal-naive", f"{improvement:.1f}% better")
-
-    st.divider()
+    with c1.container(border=True):
+        st.metric("Overall MAE", f"{overall['mae']:.3f} EUR/MWh", help="Overall Mean Absolute Error: The average error of our price predictions across all hours.")
+    with c2.container(border=True):
+        st.metric("Peak MAE (08–19h)", f"{peak['mae']:.3f} EUR/MWh", help="The average prediction error during daytime peak hours (8 AM to 7 PM) when prices are usually highest.")
+    with c3.container(border=True):
+        st.metric("Overall MAPE", f"{overall['mape']:.2f}%", help="Mean Absolute Percentage Error: The average error of our price predictions as a percentage.")
+    with c4.container(border=True):
+        st.metric("vs Seasonal-naive", f"{improvement:.1f}% better", help="How much more accurate our model is compared to guessing that next week's price equals this week's.")
 
     df_price = load_price_forecast()
     min_d, max_d = df_price["ts_local"].dt.date.min(), df_price["ts_local"].dt.date.max()
 
-    col_s, col_e = st.columns(2)
-    start = col_s.date_input("From", value=min_d, min_value=min_d, max_value=max_d, key="p_start")
-    end = col_e.date_input("To", value=max_d, min_value=min_d, max_value=max_d, key="p_end")
+    with st.container(border=True):
+        col_s, col_e = st.columns(2)
+        start = col_s.date_input("From", value=min_d, min_value=min_d, max_value=max_d, key="p_start")
+        end = col_e.date_input("To", value=max_d, min_value=min_d, max_value=max_d, key="p_end")
 
     mask = (df_price["ts_local"].dt.date >= start) & (df_price["ts_local"].dt.date <= end)
     dfp = df_price[mask]
@@ -138,7 +141,8 @@ with tab_price:
         height=420,
         margin=dict(l=40, r=20, t=60, b=40),
     )
-    st.plotly_chart(fig, use_container_width=True)
+    with st.container(border=True):
+        st.plotly_chart(fig, use_container_width=True)
 
     # MAE by hour
     mae_h = load_mae_by_hour("price_eur_mwh")
@@ -152,7 +156,8 @@ with tab_price:
         margin=dict(l=40, r=20, t=60, b=40),
         showlegend=False,
     )
-    st.plotly_chart(fig2, use_container_width=True)
+    with st.container(border=True):
+        st.plotly_chart(fig2, use_container_width=True)
 
 # ===========================================================================
 # Tab 2 — PV
@@ -170,12 +175,14 @@ with tab_pv:
     st.caption("MAPE is not reported for PV: near-zero actuals at night make the ratio meaningless.")
 
     c1, c2, c3, c4 = st.columns(4)
-    c1.metric("Overall MAE", f"{overall_pv['mae']:.2f} kW")
-    c2.metric("Daytime MAE (06–20h)", f"{day_pv['mae']:.2f} kW")
-    c3.metric("Overall RMSE", f"{overall_pv['rmse']:.2f} kW")
-    c4.metric("vs Persistence", f"{improvement_pv:.1f}% better")
-
-    st.divider()
+    with c1.container(border=True):
+        st.metric("Overall MAE", f"{overall_pv['mae']:.2f} kW", help="Overall Mean Absolute Error: The average error of our solar production predictions across all hours.")
+    with c2.container(border=True):
+        st.metric("Daytime MAE (06–20h)", f"{day_pv['mae']:.2f} kW", help="The average prediction error during daylight hours when the solar panels are actively generating power.")
+    with c3.container(border=True):
+        st.metric("Overall RMSE", f"{overall_pv['rmse']:.2f} kW", help="Root Mean Square Error: Similar to MAE but gives a higher penalty to larger prediction errors.")
+    with c4.container(border=True):
+        st.metric("vs Persistence", f"{improvement_pv:.1f}% better", help="How much more accurate our model is compared to guessing that tomorrow's production equals today's.")
 
     df_pv = load_pv_forecast()
 
@@ -184,9 +191,10 @@ with tab_pv:
     default_end = default_start + pd.Timedelta(days=13)
     min_d_pv, max_d_pv = df_pv["ts_local"].dt.date.min(), df_pv["ts_local"].dt.date.max()
 
-    col_s2, col_e2 = st.columns(2)
-    start2 = col_s2.date_input("From", value=default_start, min_value=min_d_pv, max_value=max_d_pv, key="pv_start")
-    end2 = col_e2.date_input("To", value=default_end, min_value=min_d_pv, max_value=max_d_pv, key="pv_end")
+    with st.container(border=True):
+        col_s2, col_e2 = st.columns(2)
+        start2 = col_s2.date_input("From", value=default_start, min_value=min_d_pv, max_value=max_d_pv, key="pv_start")
+        end2 = col_e2.date_input("To", value=default_end, min_value=min_d_pv, max_value=max_d_pv, key="pv_end")
 
     mask2 = (df_pv["ts_local"].dt.date >= start2) & (df_pv["ts_local"].dt.date <= end2)
     dfv = df_pv[mask2]
@@ -213,7 +221,8 @@ with tab_pv:
         height=420,
         margin=dict(l=40, r=20, t=60, b=40),
     )
-    st.plotly_chart(fig3, use_container_width=True)
+    with st.container(border=True):
+        st.plotly_chart(fig3, use_container_width=True)
 
     # MAE by hour (PV)
     mae_h_pv = load_mae_by_hour("pv_power_kw")
@@ -227,4 +236,5 @@ with tab_pv:
         margin=dict(l=40, r=20, t=60, b=40),
         showlegend=False,
     )
-    st.plotly_chart(fig4, use_container_width=True)
+    with st.container(border=True):
+        st.plotly_chart(fig4, use_container_width=True)

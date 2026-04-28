@@ -55,22 +55,25 @@ total_co2_t = df["co2_avoided_kg"].sum() / 1000
 avg_chf_yr = df["chf_saved"].sum() / 5
 
 c1, c2, c3, c4 = st.columns(4)
-c1.metric("Avg self-consumption", f"{avg_sc:.1%}",
-          help="Fraction of PV generation consumed on-site")
-c2.metric("Avg autarky ratio", f"{avg_autarky:.1%}",
-          help="Fraction of building load covered by own PV")
-c3.metric("CO₂ avoided (5-yr total)", f"{total_co2_t:.1f} t",
-          help="30 gCO₂/kWh Swiss grid intensity · IEA Electricity 2024 / SFOE")
-c4.metric("CHF saved (avg/yr)", f"CHF {avg_chf_yr:,.0f}",
-          help="(Retail 0.28 − feed-in 0.08) CHF/kWh × self-consumed kWh")
-
-st.divider()
+with c1.container(border=True):
+    st.metric("Avg self-consumption", f"{avg_sc:.1%}",
+              help="The percentage of our generated solar energy that we use on-site instead of exporting to the grid.")
+with c2.container(border=True):
+    st.metric("Avg autarky ratio", f"{avg_autarky:.1%}",
+              help="The percentage of our total energy consumption that is provided by our solar panels.")
+with c3.container(border=True):
+    st.metric("CO₂ avoided (5-yr total)", f"{total_co2_t:.1f} t",
+              help="The amount of carbon dioxide emissions saved over 5 years by using our clean solar energy instead of the grid.")
+with c4.container(border=True):
+    st.metric("CHF saved (avg/yr)", f"CHF {avg_chf_yr:,.0f}",
+              help="The average annual financial savings from generating and using our own power instead of buying it.")
 
 # ---------------------------------------------------------------------------
 # Year filter
 # ---------------------------------------------------------------------------
 years = sorted(df["month"].dt.year.unique().tolist())
-selected = st.multiselect("Filter by year", options=years, default=years)
+with st.container(border=True):
+    selected = st.multiselect("Filter by year", options=years, default=years)
 if not selected:
     selected = years
 dff = df[df["month"].dt.year.isin(selected)]
@@ -101,7 +104,8 @@ fig_flows.update_layout(
     margin=dict(l=40, r=20, t=60, b=40),
     hovermode="x unified",
 )
-st.plotly_chart(fig_flows, use_container_width=True)
+with st.container(border=True):
+    st.plotly_chart(fig_flows, use_container_width=True)
 
 # ---------------------------------------------------------------------------
 # KPI ratio lines
@@ -124,7 +128,8 @@ fig_ratios.update_layout(
     margin=dict(l=40, r=20, t=60, b=40),
     hovermode="x unified",
 )
-st.plotly_chart(fig_ratios, use_container_width=True)
+with st.container(border=True):
+    st.plotly_chart(fig_ratios, use_container_width=True)
 
 # ---------------------------------------------------------------------------
 # CHF saved + CO₂ avoided side by side
@@ -142,7 +147,8 @@ fig_chf.update_layout(
     height=300,
     margin=dict(l=40, r=20, t=50, b=40),
 )
-col_chf.plotly_chart(fig_chf, use_container_width=True)
+with col_chf.container(border=True):
+    st.plotly_chart(fig_chf, use_container_width=True)
 
 fig_co2 = go.Figure(go.Bar(
     x=dff["month"], y=dff["co2_avoided_kg"],
@@ -155,7 +161,8 @@ fig_co2.update_layout(
     height=300,
     margin=dict(l=40, r=20, t=50, b=40),
 )
-col_co2.plotly_chart(fig_co2, use_container_width=True)
+with col_co2.container(border=True):
+    st.plotly_chart(fig_co2, use_container_width=True)
 
 st.caption(
     "Self-consumption is high (>80%) because the 100 kWp system (avg ~12 kW output) "
